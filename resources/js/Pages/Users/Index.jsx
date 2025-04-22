@@ -1,6 +1,6 @@
 import Pagination from '@/Components/Pagination';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function UserIndex({ auth, users }) {
     return (
@@ -16,6 +16,10 @@ export default function UserIndex({ auth, users }) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className='flex justify-between mb-3 item-center'>
+                        <label className='text-lg font-semibold font-bold'>Total Data User : {users.total}</label>
+                        <Link href={route('users.create')} className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>Create User</Link>
+                    </div>
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             <table className='min-w-full'>
@@ -33,13 +37,13 @@ export default function UserIndex({ auth, users }) {
                                             <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user.id}</td>
                                             <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user.name}</td>
                                             <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user.email}</td>
-                                            <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>&nbsp;</td>
+                                            <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user.role}</td>
                                         </tr>
                                     ))}
 
                                 </tbody>
                             </table>
-                                <Pagination links={users.links} />
+                            <Pagination links={users.links} />
                         </div>
                     </div>
                 </div>
