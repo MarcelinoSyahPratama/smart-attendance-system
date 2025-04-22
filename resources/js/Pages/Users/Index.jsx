@@ -29,6 +29,7 @@ export default function UserIndex({ auth, users }) {
                                         <th className='px-6 py-3 text-left text-lg font-medium text-black'>Name</th>
                                         <th className='px-6 py-3 text-left text-lg font-medium text-black'>Email</th>
                                         <th className='px-6 py-3 text-left text-lg font-medium text-black'>Role</th>
+                                        <th className='px-6 py-3 text-left text-lg font-medium text-black'>&nbsp;</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -38,6 +39,10 @@ export default function UserIndex({ auth, users }) {
                                             <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user.name}</td>
                                             <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user.email}</td>
                                             <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>{user.role}</td>
+                                            <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
+                                                <Link href={route('users.edit', user.id)} className='bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2'>Edit</Link>
+                                                <Link href={route('users.delete', user.id)} method="delete" as="button" className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>Delete</Link>
+                                            </td>
                                         </tr>
                                     ))}
 

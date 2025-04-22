@@ -10,22 +10,23 @@ import { Head, useForm } from '@inertiajs/react';
 import Selectbox from '@/Components/Selectbox';
 
 
-export default function UserIndex({ auth }) {
+export default function EditIndex({ user, auth }) {
 
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
-        name: '',
-        email: '',
+    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+        name: user.name,
+        email: user.email,
         password: '',
         password_confirmation: '',
+        role: user.role,
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('users.store'), {
+        patch(route('users.update', user.id), {
             preserveScroll: true,
             onSuccess: () => {
-                alert('User Created');
+                alert('User Updated');
             }, onError: (errors) => {
                 console.log(errors);
             }
@@ -97,7 +98,7 @@ export default function UserIndex({ auth }) {
 
                                          <Selectbox
                                             id="role"
-                                            currentValue="user"
+                                            currentValue={data.role}
                                             onChange={(e) => setData('role', e.target.value)}
                                             options={[
                                                 { value: 'admin', label: 'Admin' },
