@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function index(){
-        $Users = User::all();
+        $Users = User::paginate(10);
         return Inertia::render('Users/Index', [
             'users' => $Users
         ]);
