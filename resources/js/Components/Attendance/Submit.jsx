@@ -14,23 +14,57 @@ import { useState, useEffect } from 'react';
 export default function SubmitAttendance() {
     const [transitioning, settransitioning] = useState(false);
 
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, post, transform, errors, processing, recentlySuccessful } = useForm({
         status: 'attend',
         description: '',
+        latitude: "",
+        longitude: "",
+        prepareData: {}
     });
 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('users.store'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                alert('User Created');
-            }, onError: (errors) => {
-                console.log(errors);
-            }
-        });
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+
+                setData('prepareData',{
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                });
+            },
+            function (error) {
+                console.error('Error getting location: ', error);
+                alert('Gagal Mendapatkan Lokasi Anda. Silahkan Cek Pengaturan Lokasi');
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
     };
+
+    useEffect(() => {
+        if (
+            data.prepareData.hasOwnProperty("latitude") &&
+            data.prepareData.hasOwnProperty("longitude")
+        ) {
+            transform((data) => ({
+                ...data.prepareData,
+                status: data.status,
+                description: data.description,
+            }));
+
+            post(route('attendances.submit'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    delete data.prepareData.latitude;
+                    delete data.prepareData.longitude;
+                    alert('Absensi Sukses');
+
+                }, onError: (errors) => {
+                    console.log(errors);
+                }
+            });
+        }
+    }, [data.prepareData]);
 
     useEffect(() => {
         if (data.status === 'attend') {
@@ -71,16 +105,16 @@ export default function SubmitAttendance() {
                 leaveTo='opacity-0'
             >
 
-            <div>
-                <InputLabel htmlFor="description" value="Penjelasan" />
+                <div>
+                    <InputLabel htmlFor="description" value="Penjelasan" />
 
 
-                <TextInput
-                    onChange={(e) => setData('description', e.target.value)}
-                    className='w-full'
-                />
-                <InputError className="mt-2" message={errors.descripton} />
-            </div>
+                    <TextInput
+                        onChange={(e) => setData('description', e.target.value)}
+                        className='w-full'
+                    />
+                    <InputError className="mt-2" message={errors.descripton} />
+                </div>
             </Transition>
 
             <div className="flex items-center gap-4">

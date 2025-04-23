@@ -26,8 +26,8 @@ console.log(user)
                     },
                     {
                         name: "Absensi",
-                        href: route('dashboard'),
-                        current: route().current('dashboard'),
+                        href: route('attendances.index'),
+                        current: route().current('attendances.index'),
                     },
             ];
         } else if (role === 'user') {
