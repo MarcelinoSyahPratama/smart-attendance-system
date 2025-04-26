@@ -31,8 +31,10 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8',
             'password_confirmation' => 'required|string|same:password',
+            'uid' => 'nullable|unique:users,uid',
         ]);
         User::create([
+            'uid' => $request->uid,
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
@@ -45,10 +47,12 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
+            'uid' => 'nullable|string|max:255|unique:users,uid,'.$user->id,
             'password' => 'nullable|string|min:8',
             'password_confirmation' => 'nullable|string|same:password',
         ]);
         $user->update([
+            'uid' => $request->uid,
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password ? bcrypt($request->password) : $user->password,

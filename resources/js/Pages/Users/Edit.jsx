@@ -13,7 +13,8 @@ import roles from '@/data/roles.json';
 
 export default function EditIndex({ user, auth }) {
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, patch, reset, errors, processing, recentlySuccessful } = useForm({
+        uid: user.uid || "",
         name: user.name,
         email: user.email,
         password: '',
@@ -33,6 +34,17 @@ export default function EditIndex({ user, auth }) {
             }
         });
     };
+
+    window.Echo.channel("read-rfid-channel").listen("ReadRfidEvent",(e) => {
+        if(e.code == "EXISTS"){
+            errors.uid = e.message;
+            reset('uid');
+        }else{
+            errors.uid = "";
+            reset("uid");
+            setData("uid",e.uid);
+        }
+    });
 
     return (
         <AuthenticatedLayout
@@ -62,6 +74,22 @@ export default function EditIndex({ user, auth }) {
                                 </header>
 
                                 <form onSubmit={submit} className="mt-6 space-y-6">
+                                    <div>
+                                        <InputLabel htmlFor="uid" value="Rfid" />
+
+                                        <TextInput
+                                            id="uid"
+                                            className="mt-1 block w-full"
+                                            value={data.uid}
+                                            onChange={(e) => setData('uid', e.target.value)}
+                                            readOnly
+                                            isFocused
+                                        />
+
+                                        <InputError className="mt-2" message={errors.uid} />
+                                    </div>
+
+
                                     <div>
                                         <InputLabel htmlFor="name" value="Name" />
 
@@ -97,12 +125,12 @@ export default function EditIndex({ user, auth }) {
                                     <div>
                                         <InputLabel htmlFor="role" value="role" />
 
-                                         <Selectbox
+                                        <Selectbox
                                             id="role"
                                             currentValue={data.role}
                                             onChange={(e) => setData('role', e.target.value)}
                                             options={roles}
-                                            required/>
+                                            required />
 
                                         <InputError className="mt-2" message={errors.email} />
                                     </div>

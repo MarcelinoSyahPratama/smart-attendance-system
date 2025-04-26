@@ -13,7 +13,8 @@ import roles from '@/data/roles.json';
 
 export default function UserIndex({ auth }) {
 
-    const { data, setData, post, errors, processing, recentlySuccessful } = useForm({
+    const { data, setData, post, errors, reset, processing, recentlySuccessful } = useForm({
+        uid: '',
         name: '',
         email: '',
         password: '',
@@ -32,6 +33,17 @@ export default function UserIndex({ auth }) {
             }
         });
     };
+
+    window.Echo.channel("read-rfid-channel").listen("ReadRfidEvent",(e) => {
+        if(e.code == "EXISTS"){
+            errors.uid = e.message;
+            reset('uid');
+        }else{
+            errors.uid = "";
+            reset("uid");
+            setData("uid",e.uid);
+        }
+    });
 
     return (
         <AuthenticatedLayout
@@ -62,6 +74,22 @@ export default function UserIndex({ auth }) {
 
                                 <form onSubmit={submit} className="mt-6 space-y-6">
                                     <div>
+                                        <InputLabel htmlFor="uid" value="Rfid" />
+
+                                        <TextInput
+                                            id="uid"
+                                            className="mt-1 block w-full"
+                                            value={data.uid}
+                                            onChange={(e) => setData('uid', e.target.value)}
+                                            required
+                                            
+                                            isFocused
+                                        />
+
+                                        <InputError className="mt-2" message={errors.uid} />
+                                    </div>
+
+                                    <div>
                                         <InputLabel htmlFor="name" value="Name" />
 
                                         <TextInput
@@ -70,7 +98,6 @@ export default function UserIndex({ auth }) {
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
                                             required
-                                            isFocused
                                             autoComplete="name"
                                         />
 

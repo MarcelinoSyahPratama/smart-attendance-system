@@ -10,4 +10,14 @@ export default defineConfig({
         }),
         react(),
     ],
+    server: {
+        host: '0.0.0.0', // Listen semua IP
+        port: 5173,
+        hmr: {
+          host: '192.168.1.2', // IP lokal kamu
+        },
+        cors: {
+          origin: '*',
+        },
+      },
 });
